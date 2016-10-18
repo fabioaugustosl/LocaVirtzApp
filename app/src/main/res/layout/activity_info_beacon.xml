@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="br.com.virtz.www.locavirtzapp.InfoBeaconActivity">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:textSize="16dp"
+        android:id="@+id/txtNomeBeacon"
+        android:layout_marginTop="30dp" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="120dp"
+        android:textColor="@android:color/holo_green_dark"
+        android:text="\?"
+        android:id="@+id/txtDistanciaBeacon"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="60dp"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:textColor="@android:color/holo_green_dark"
+        android:text="metros"
+        android:id="@+id/labelDistanciaBeacon"
+        android:layout_gravity="center_vertical"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="80dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@android:color/holo_red_light"
+        android:text=""
+        android:id="@+id/txtNomeLocal"
+        android:layout_gravity="center_vertical"
+        android:gravity="center" />
+</LinearLayout>
