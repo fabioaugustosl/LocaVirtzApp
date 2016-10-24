@@ -22,18 +22,17 @@ public class LocaDBHelper extends SQLiteOpenHelper {
 
         // beacons vistos - serve como histórico
         db.execSQL("CREATE TABLE beacons_historico (_id INTEGER PRIMARY KEY, data DATE DEFAULT (date('now','localtime')), " +
-                " id_beacon Integer, nome_beacon TEXT, distancia_beacon REAL, nome_beacon_secundario TEXT, distancia_beacon_secundario REAL,"+
-                " nome_beacon_secundario2 TEXT, distancia_beacon_secundario2, " +
-                " FOREIGN KEY(id_beacon) REFERENCES beacons(_id));");
+                " nome_beacon TEXT, distancia_beacon REAL, nome_beacon_secundario TEXT, distancia_beacon_secundario REAL,"+
+                " nome_beacon_secundario2 TEXT, distancia_beacon_secundario2);");
 
         // eventos
-        db.execSQL("CREATE TABLE eventos (_id INTEGER PRIMARY KEY, id_beacon Integer, beacon TEXT, " +
-                " dono TEXT, tipo TEXT, texto TEXT, distancia_minima REAL," +
-                " FOREIGN KEY(id_beacon) REFERENCES beacons(_id));");
+        db.execSQL("CREATE TABLE eventos (_id INTEGER PRIMARY KEY, beacon TEXT, " +
+                " dono TEXT, tipo TEXT, titulo TEXT, texto TEXT, textoExtra TEXT, distancia_minima REAL);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //db.execSQL("ALTER TABLE gasto ADD COLUMN pessoa TEXT");
     }
+
 }

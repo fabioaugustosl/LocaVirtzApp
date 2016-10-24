@@ -18,7 +18,6 @@ public class BeaconHistoricoMapper {
     private String[] colunas = {
             "_id",
             "data",
-            "id_beacon",
             "nome_beacon",
             "distancia_beacon"
     };
@@ -40,11 +39,10 @@ public class BeaconHistoricoMapper {
             try {
                 data = sdf.parse(cursor.getString(1));
             }catch (ParseException pe){}
-            String idBeacon = cursor.getString(2);
-            String nomeBeacon = cursor.getString(3);
-            Double distanciaBeacon = cursor.getDouble(4);
+            String nomeBeacon = cursor.getString(2);
+            Double distanciaBeacon = cursor.getDouble(3);
 
-            BeaconHistoricoBean b = new BeaconHistoricoBean(id, data, idBeacon, nomeBeacon, distanciaBeacon);
+            BeaconHistoricoBean b = new BeaconHistoricoBean(id, data, nomeBeacon, distanciaBeacon);
             beacons.add(b);
         } while (cursor.moveToNext());
 

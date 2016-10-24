@@ -14,11 +14,12 @@ public class EventoMapper {
 
     private String[] colunas = {
             "_id",
-            "id_beacon",
             "beacon",
             "dono",
             "tipo",
+            "titulo",
             "texto",
+            "textoExtra",
             "distancia_minima"
     };
 
@@ -26,20 +27,31 @@ public class EventoMapper {
 
         List<EventoBean> eventos = new ArrayList<EventoBean>();
         if(cursor!=null){
-            cursor.moveToFirst();
+            try {
+                cursor.moveToFirst();
+            }catch (Exception e){
+                return null;
+            }
         } else {
+            return null;
+        }
+
+        // se não tiver nenhum no banco ainda
+        if(!cursor.isFirst()){
             return null;
         }
 
         do {
             String id = cursor.getString(0);
-            String beacon = cursor.getString(2);
-            String dono = cursor.getString(3);
-            String tipo = cursor.getString(4);
+            String beacon = cursor.getString(1);
+            String dono = cursor.getString(2);
+            String tipo = cursor.getString(3);
+            String titulo = cursor.getString(4);
             String texto = cursor.getString(5);
-            double distanciaMinima = cursor.getDouble(6);
+            String textoExtra = cursor.getString(6);
+            double distanciaMinima = cursor.getDouble(7);
 
-            EventoBean e = new EventoBean(id, dono, beacon, distanciaMinima, tipo, texto);
+            EventoBean e = new EventoBean(id, dono, beacon, distanciaMinima, tipo, titulo, texto, textoExtra);
             eventos.add(e);
         } while (cursor.moveToNext());
         if (cursor != null && !cursor.isClosed()) {

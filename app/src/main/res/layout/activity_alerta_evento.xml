@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/AppTheme.NoActionBar"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".dialog.AlertaEventoActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearLayoutAlertaBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btn_fechar_alerta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="140dp"
+            android:text="Não, obrigado"
+            android:textColor="@android:color/tertiary_text_light"
+            android:textStyle="normal"
+            android:onClick="fechar"/>
+
+        <Button
+            android:id="@+id/btn_ver_alerta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:width="140dp"
+            android:text="QUERO VER!"
+            android:onClick="ver"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/txt_titulo_alerta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="Titulo"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

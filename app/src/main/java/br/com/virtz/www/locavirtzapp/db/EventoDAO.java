@@ -20,22 +20,23 @@ public class EventoDAO extends LocaDBHelper {
         super(context);
     }
 
-    public boolean novoEvento(Integer idBeacon, String beacon, String dono, String tipo, String texto, Double distanciaMinima){
+    public boolean novoEvento(String beacon, String dono, String tipo, String titulo, String texto, String textoExtra, Double distanciaMinima){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues content = new ContentValues();
 
-        content.put("id_beacon", idBeacon);
         content.put("beacon", beacon);
         content.put("dono", dono);
         content.put("tipo", tipo);
+        content.put("titulo", titulo);
         content.put("texto", texto);
+        content.put("textoExtra", textoExtra);
         content.put("distancia_minima", distanciaMinima.toString());
 
         long resultado = db.insert(EVENTOS, null, content);
 
         db.close();
-        if(resultado != -1 ){
+        if(resultado > 0l ){
             return true;
         }else{
             return false;
@@ -69,7 +70,7 @@ public class EventoDAO extends LocaDBHelper {
 
     public void remover(String id){
         SQLiteDatabase db = this.getReadableDatabase();
-        String where =  "id  LIKE ?";
+        String where =  "_id  LIKE ?";
         String[] whereArgs = { String.valueOf(id) };
         db.delete(EVENTOS,where,whereArgs);
         db.close();

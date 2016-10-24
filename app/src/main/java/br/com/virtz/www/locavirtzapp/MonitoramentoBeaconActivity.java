@@ -17,18 +17,28 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.BeaconManager;
 
+import java.util.ArrayList;
+
+import br.com.virtz.www.locavirtzapp.adapters.EventoAdapter;
+import br.com.virtz.www.locavirtzapp.beans.EventoBean;
+import br.com.virtz.www.locavirtzapp.dialog.AlertaEventoActivity;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconConsumer;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconService;
 
-public class MonitoramentoBeaconActivity extends Activity {
+public class MonitoramentoBeaconActivity extends LocaVirtzSuperActivity {
 
     protected static final String TAG = "MonitoramentoBeaconActivity";
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +46,9 @@ public class MonitoramentoBeaconActivity extends Activity {
         setContentView(R.layout.activity_monitoramento_beacon);
 
         verifyBluetooth();
+
         TextView txtM = (TextView) findViewById(R.id.textoMonitorando);
-        txtM.setText("App funcionando. Monitorando...");
+        txtM.setText("Ande por todo o ambiente. Estamos monitorando coisas boas perto de você.");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
@@ -60,15 +71,27 @@ public class MonitoramentoBeaconActivity extends Activity {
             }
         }
 
-        ((LocaApplication) this.getApplicationContext()).setMonitoringActivity(this);
+        //stopServiceBeacon(null);
+        //((LocaApplication) this.getApplicationContext()).setMonitoringActivity(this);
+
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        initServiceBeacon(null);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent service = new Intent(this.getApplicationContext(),VirtzBeaconConsumer.class);
-        this.startService(service);
+
+        initServiceBeacon(null);
+
+  //      initServiceBeacon(null);
+
+//        Intent service = new Intent(this.getApplicationContext(),VirtzBeaconConsumer.class);
+//        this.startService(service);
     }
 
     @Override
@@ -96,21 +119,11 @@ public class MonitoramentoBeaconActivity extends Activity {
         }
     }
 
-    public void onRangingClicked(View view) {
-        Intent myIntent = new Intent(this, InfoBeaconActivity.class);
-        this.startActivity(myIntent);
-    }
-
-
-    public void initServiceBeacon(View view) {
-        Intent myIntent = new Intent(this.getApplicationContext(), VirtzBeaconConsumer.class);
-        this.startService(myIntent);
-    }
-
-
-    public void stopServiceBeacon(View view) {
-        Intent intentService = new Intent(this.getApplicationContext(), VirtzBeaconConsumer.class);
-        stopService(intentService);
+    public void irParaMonitamentoBeacons(View view) {
+        Intent intent = new Intent(getApplicationContext(), AlertaEventoActivity.class);
+        startActivity(intent);
+        //Intent myIntent = new Intent(this, InfoBeaconActivity.class);
+        //this.startActivity(myIntent);
     }
 
 
@@ -118,26 +131,10 @@ public class MonitoramentoBeaconActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        ((LocaApplication) this.getApplicationContext()).setMonitoringActivity(this);
-        try{
-            Intent service = new Intent(this.getApplicationContext(),VirtzBeaconConsumer.class);
-            this.stopService(service);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //((LocaApplication) this.getApplicationContext()).setMonitoringActivity(this);
+   //     stopServiceBeacon(null);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((LocaApplication) this.getApplicationContext()).setMonitoringActivity(null);
-        try{
-            Intent service = new Intent(this.getApplicationContext(),VirtzBeaconConsumer.class);
-            this.stopService(service);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     private void verifyBluetooth() {
 
@@ -180,8 +177,7 @@ public class MonitoramentoBeaconActivity extends Activity {
     public void logToDisplay(final String line) {
         runOnUiThread(new Runnable() {
             public void run() {
-                TextView text = (TextView)MonitoramentoBeaconActivity.this
-                        .findViewById(R.id.monitoringText);
+                TextView text = (TextView)MonitoramentoBeaconActivity.this.findViewById(R.id.monitoringText);
                 text.setText(line);
             }
         });

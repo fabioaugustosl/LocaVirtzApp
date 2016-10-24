@@ -3,7 +3,10 @@ package br.com.virtz.www.locavirtzapp.mapper;
 
 import android.database.Cursor;
 
+import org.altbeacon.beacon.Beacon;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.com.virtz.www.locavirtzapp.beans.BeaconBean;
@@ -20,12 +23,22 @@ public class BeaconMapper {
 
         List<BeaconBean> beacons = new ArrayList<BeaconBean>();
         if(cursor!=null){
-            cursor.moveToFirst();
+            try {
+                cursor.moveToFirst();
+            }catch (Exception e){
+                return null;
+            }
         } else {
             return null;
         }
 
+        // se não tiver nenhum no banco ainda
+        if(!cursor.isFirst()){
+            return null;
+        }
+
         do {
+
             String id = cursor.getString(0);
             String nome = cursor.getString(1);
             String dono = cursor.getString(2);
@@ -38,6 +51,23 @@ public class BeaconMapper {
             cursor.close();
         }
         return beacons;
+    }
+
+
+    public List<BeaconBean> beaconParaBeaconsBean(List<Beacon> beacons){
+
+        List<BeaconBean> beaconsNovos = new ArrayList<BeaconBean>();
+
+        for(Beacon b : beacons){
+            BeaconBean bNovo = new BeaconBean();
+            bNovo.setDono("virtz");
+            bNovo.setNome(b.getId1().toString());
+            bNovo.setDistanciaAtual(b.getDistance());
+
+            beaconsNovos.add(bNovo);
+        }
+
+        return beaconsNovos;
     }
 
 

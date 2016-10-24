@@ -1,9 +1,15 @@
 package br.com.virtz.www.locavirtzapp.service;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -15,13 +21,24 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import br.com.virtz.www.locavirtzapp.DetalheEventoActivity;
+import br.com.virtz.www.locavirtzapp.LocaApplication;
 import br.com.virtz.www.locavirtzapp.MonitoramentoBeaconActivity;
-import br.com.virtz.www.locavirtzapp.db.LocaDBHelper;
+import br.com.virtz.www.locavirtzapp.async.VerificarNotificacaoBeacons;
+import br.com.virtz.www.locavirtzapp.beans.BeaconBean;
+import br.com.virtz.www.locavirtzapp.beans.EventoBean;
+import br.com.virtz.www.locavirtzapp.dialog.AlertaEvento;
+import br.com.virtz.www.locavirtzapp.dialog.AlertaEventoActivity;
+import br.com.virtz.www.locavirtzapp.mapper.BeaconMapper;
 import br.com.virtz.www.locavirtzapp.notifications.Notification;
 import br.com.virtz.www.locavirtzapp.notifications.ShowNotifications;
 
@@ -39,14 +56,21 @@ public class VirtzBeaconConsumer extends Service implements BeaconConsumer {
     private BeaconManager beaconManager = null;
 
 
-    private List<String> beaconsEncontrados = null;
+    private Map<String, Date> beaconsEncontrados = null;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        beaconsEncontrados = new ArrayList<String>();
+        beaconsEncontrados = new HashMap<String, Date>();
+        ((LocaApplication)getApplication()).setEstouRastreando(true);
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((LocaApplication)getApplication()).setEstouRastreando(false);
     }
 
     @Override
@@ -67,22 +91,60 @@ public class VirtzBeaconConsumer extends Service implements BeaconConsumer {
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-            if (beacons.size() > 0) {
-                Beacon firstBeacon = beacons.iterator().next();
+                if (beacons.size() > 0) {
 
-                if(!beaconsEncontrados.contains(firstBeacon.toString())) {
-                    NumberFormat nb = NumberFormat.getInstance();
-                    nb.setMaximumFractionDigits(2);
+                    List<Beacon> beaconsPermitidos = retiraBeaconsJaEncontrados(beacons);
 
-                    String txt = "Aproveite que você está passando perto do acougue! Promoção da alcatra, apenas R$19,90!  (" + firstBeacon.getDistance()+")";
-                    MonitoramentoBeaconActivity m = new MonitoramentoBeaconActivity();
-                    notifications.sendNotification(new Notification("Virtz Loca", txt, m, getApplicationContext()));
-                    beaconsEncontrados.add(firstBeacon.toString());
+                    if (beaconsPermitidos != null && !beaconsPermitidos.isEmpty()) {
+
+                        boolean appEstahAberto = appAberto(getApplicationContext());
+
+                        BeaconMapper mapper = new BeaconMapper();
+
+                        List<BeaconBean> beaconsBean = mapper.beaconParaBeaconsBean(beaconsPermitidos);
+                        VerificarNotificacaoBeacons notificacaoTask = new VerificarNotificacaoBeacons(getApplicationContext());
+                        List<EventoBean> eventos = notificacaoTask.recuperarEventosCompativeis(beaconsBean.toArray(new BeaconBean[]{}));
+
+                        if(eventos != null && !eventos.isEmpty()){
+                            for(EventoBean evento: eventos){
+                                beaconsEncontrados.put(evento.getBeacon(), new Date());
+
+                                if(appEstahAberto){
+                                    final EventoBean eventoAlerta = evento;
+
+                                    Intent intent = new Intent(getApplicationContext(), AlertaEventoActivity.class);
+                                    intent.putExtra("EVENTO", evento);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    String texto = "";
+                                    Intent intent = null;
+                                    if("NOTIFICACAO".equals(evento.getTipoEvento())) {
+                                        texto = evento.getTexto();
+                                        intent = new Intent(getApplicationContext(), DetalheEventoActivity.class);
+                                        intent.putExtra("EVENTO", evento);
+                                    } else {
+                                        texto = evento.getTextoExtra();
+                                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(evento.getTexto()));
+                                        if("IMAGEM".equals(evento.getId())){
+                                            intent.setType("image/*");
+                                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        }
+                                    }
+
+                                    Notification notification = new Notification(evento.getTitulo(), texto, intent, getApplicationContext());
+                                    ShowNotifications show = new ShowNotifications();
+                                    show.sendNotification(notification);
+                                }
+                            }
+                        }
+
+                    }
+
+                } else {
+                    Log.d(this.getClass().toString(),"Não rolou nenhum beacon");
                 }
-
-            } else {
-                Log.d(this.getClass().toString(),"Não rolou nenhum beacon");
-            }
             }
 
         });
@@ -94,10 +156,28 @@ public class VirtzBeaconConsumer extends Service implements BeaconConsumer {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+
+
+    private List<Beacon>  retiraBeaconsJaEncontrados(Collection<Beacon> beacons) {
+        Iterator<Beacon> itBeacon = beacons.iterator();
+        List<Beacon> retorno = new ArrayList<Beacon>();
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR_OF_DAY, -1);
+
+        while(itBeacon.hasNext()){
+            Beacon b = itBeacon.next();
+            Date dataEncontrado =  beaconsEncontrados.get(b.getId1().toString());
+
+            if(dataEncontrado == null || c.getTime().after(dataEncontrado)) {
+                retorno.add(b);
+            }
+        }
+        return retorno;
     }
+
+
+
 
     @Nullable
     @Override
@@ -110,13 +190,22 @@ public class VirtzBeaconConsumer extends Service implements BeaconConsumer {
         return this;
     }
 
-    @Override
-    public void unbindService(ServiceConnection serviceConnection) {
-        Log.d(this.getClass().getName(), "unbindService muito loco");
-    }
 
     @Override
     public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+        return false;
+    }
+
+
+    public boolean appAberto(Context ctx) {
+        ActivityManager activityManager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningTaskInfo task : tasks) {
+            if (ctx.getPackageName().equalsIgnoreCase(task.baseActivity.getPackageName()))
+                return true;
+        }
+
         return false;
     }
 

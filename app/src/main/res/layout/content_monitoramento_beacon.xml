@@ -13,6 +13,12 @@
     tools:context="br.com.virtz.www.locavirtzapp.MonitoramentoBeaconActivity"
     tools:showIn="@layout/activity_monitoramento_beacon">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_exemplo"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true" />
 
 
     <TextView
@@ -38,34 +44,5 @@
         android:textColor="@android:color/holo_red_dark">
     </TextView>
 
-    <Button
-        android:id="@+id/btnInfor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="100dp"
-        android:background="@android:color/holo_orange_light"
-        android:onClick="onRangingClicked"
-        android:text="Mais informações" />
 
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/holo_orange_light"
-        android:onClick="initServiceBeacon"
-        android:text="Start service" />
-
-
-    <Button
-        android:id="@+id/btnStop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/holo_orange_light"
-        android:onClick="stopServiceBeacon"
-        android:text="Stop Service" />
 </LinearLayout>

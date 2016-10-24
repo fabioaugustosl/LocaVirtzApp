@@ -30,7 +30,7 @@ public class BeaconDAO extends LocaDBHelper {
         long resultado = db.insert(BEACONS, null, content);
 
         db.close();
-        if(resultado != -1 ){
+        if(resultado != -1l ){
             return true;
         }else{
             return false;
@@ -52,9 +52,9 @@ public class BeaconDAO extends LocaDBHelper {
                 null                                 // The sort order
         );
 
-        Cursor cursor = db.rawQuery("SELECT _id, nome, dono FROM beacons",null);
+        //Cursor cursor = db.rawQuery("SELECT _id, nome, dono FROM beacons",null);
 
-        List<BeaconBean> beacons = mapper.cursorParaBeacons(cursor);
+        List<BeaconBean> beacons = mapper.cursorParaBeacons(c);
 
         db.close();
 

@@ -2,34 +2,42 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.virtz.www.locavirtzapp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:debuggable="true"
+        android:name=".LocaApplication"
         android:allowBackup="true"
+        android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="LocaApplication">
+        android:theme="@android:style/Theme.NoTitleBar">
         <activity
-            android:name="MonitoramentoBeaconActivity"
+            android:name=".MonitoramentoBeaconActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".InfoBeaconActivity"
+            android:label="@string/app_name" />
 
-        <activity android:name="InfoBeaconActivity"
-            android:label="@string/app_name"></activity>
+        <service
+            android:name=".service.VirtzBeaconConsumer"
+            android:label="@string/app_name" />
 
-        <service android:name=".service.VirtzBeaconConsumer"
-            android:label="@string/app_name"/>
+        <activity android:name=".DetalheEventoActivity"></activity>
 
+
+        <activity android:name=".dialog.AlertaEventoActivity"
+            android:theme="@style/DialogVirtzFromService" />
 
     </application>
 

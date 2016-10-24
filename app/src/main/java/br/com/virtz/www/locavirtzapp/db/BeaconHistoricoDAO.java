@@ -21,20 +21,21 @@ public class BeaconHistoricoDAO extends LocaDBHelper {
         super(context);
     }
 
-    public boolean novoHistorico(String idBeacon, String nomeBeacon, Date data, Double distancia){
+    public boolean novoHistorico(String nomeBeacon, Date data, Double distancia){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues content = new ContentValues();
 
-        content.put("id_beacon", idBeacon);
         content.put("nome_beacon", nomeBeacon);
         content.put("data", data.getTime());
-        content.put("distancia_beacon", distancia.toString());
+        if(distancia != null) {
+            content.put("distancia_beacon", distancia.toString());
+        }
 
         long resultado = db.insert(BEACONS_HISTORICO, null, content);
 
         db.close();
-        if(resultado != -1 ){
+        if(resultado > 0l ){
             return true;
         }else{
             return false;

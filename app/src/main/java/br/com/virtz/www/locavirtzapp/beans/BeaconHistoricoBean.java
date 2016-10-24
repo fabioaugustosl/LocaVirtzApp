@@ -8,17 +8,15 @@ public class BeaconHistoricoBean implements Serializable{
 
     private String id;
     private Date data;
-    private String idBeacon;
     private String nomeBeacon;
     private Double distanciaBeacon;
 
     public BeaconHistoricoBean() {
     }
 
-    public BeaconHistoricoBean(String id, Date data, String idBeacon, String nomeBeacon, Double distanciaBeacon) {
+    public BeaconHistoricoBean(String id, Date data, String nomeBeacon, Double distanciaBeacon) {
         this.id = id;
         this.data = data;
-        this.idBeacon = idBeacon;
         this.nomeBeacon = nomeBeacon;
         this.distanciaBeacon = distanciaBeacon;
 
@@ -39,14 +37,6 @@ public class BeaconHistoricoBean implements Serializable{
 
     public void setData(Date data) {
         this.data = data;
-    }
-
-    public String getIdBeacon() {
-        return idBeacon;
-    }
-
-    public void setIdBeacon(String idBeacon) {
-        this.idBeacon = idBeacon;
     }
 
     public String getNomeBeacon() {

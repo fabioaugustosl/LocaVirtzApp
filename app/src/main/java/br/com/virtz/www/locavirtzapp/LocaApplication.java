@@ -26,7 +26,10 @@ import org.altbeacon.beacon.startup.RegionBootstrap;
 
 import java.util.Collection;
 
+import br.com.virtz.www.locavirtzapp.async.SalvarHistoricoTask;
 import br.com.virtz.www.locavirtzapp.async.SincronizarBeaconTask;
+import br.com.virtz.www.locavirtzapp.async.SincronizarEventoTask;
+import br.com.virtz.www.locavirtzapp.beans.BeaconHistoricoBean;
 import br.com.virtz.www.locavirtzapp.notifications.Notification;
 import br.com.virtz.www.locavirtzapp.notifications.ShowNotifications;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconConsumer;
@@ -63,9 +66,9 @@ public class LocaApplication extends Application implements BootstrapNotifier {
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
-        beaconManager.setForegroundScanPeriod(5000l);
-        beaconManager.setBackgroundBetweenScanPeriod(3000l);
-        beaconManager.setBackgroundScanPeriod(5000l);
+        beaconManager.setForegroundScanPeriod(10000l);
+        beaconManager.setBackgroundBetweenScanPeriod(8000l);
+        beaconManager.setBackgroundScanPeriod(10000l);
 
         Region region = new Region("backgroundRegion", null, null, null);
 
@@ -91,6 +94,17 @@ public class LocaApplication extends Application implements BootstrapNotifier {
         //INICIAR SINCRONIZADORES
         SincronizarBeaconTask beaconTask = new SincronizarBeaconTask(this);
         beaconTask.execute();
+
+        SincronizarEventoTask eventoTask = new SincronizarEventoTask(this);
+        eventoTask.execute();
+
+
+        // EXEMPLO DE COMO SALVAR UM HISTORICO
+       /* SalvarHistoricoTask histTask = new SalvarHistoricoTask(this);
+        BeaconHistoricoBean h = new BeaconHistoricoBean();
+        h.setNomeBeacon("003e8c80-ea01-4ebb-b888-78da19df9e55");
+
+        histTask.execute(h);*/
     }
 
 
@@ -100,7 +114,7 @@ public class LocaApplication extends Application implements BootstrapNotifier {
         // In this example, this class sends a notification to the user whenever a Beacon
         // matching a Region (defined above) are first seen.
         Log.d(TAG, "did enter region.");
-        if (!haveDetectedBeaconsSinceBoot) {
+        /*if (!haveDetectedBeaconsSinceBoot) {
             Log.d(TAG, "auto launching MainActivity");
 
             // The very first time since boot that we detect an beacon, we launch the
@@ -121,41 +135,46 @@ public class LocaApplication extends Application implements BootstrapNotifier {
                 // seen on its display
 
                 monitoringActivity.logToDisplay("Eu vejo um beacon de novo" );
-            } else if(!isEstouRastreando()) {
+            } else */
+
+            if(!isEstouRastreando()) {
                 // If we have already seen beacons before, but the monitoring activity is not in
                 // the foreground, we send a notification to the user on subsequent detections.
 
-                Log.d(TAG, "Sending notification.");
-                sendNotification();
+                //Log.d(TAG, "Sending notification.");
+                //sendNotification();
+
+                Log.d(TAG, "start beacon consumer background");
 
                 Intent service = new Intent(this.getApplicationContext(), VirtzBeaconConsumer.class);
                 this.startService(service);
             }
-        }
+//        }
 
     }
 
 
     @Override
     public void didExitRegion(Region region) {
-        if (monitoringActivity != null) {
+       /* if (monitoringActivity != null) {
             monitoringActivity.logToDisplay("Eu não vejo nenhum beacon.");
-        }
+        }*/
     }
 
     @Override
     public void didDetermineStateForRegion(int state, Region region) {
-        if (monitoringActivity != null) {
+      /*  if (monitoringActivity != null) {
             this.estouRastreando = true;
             monitoringActivity.logToDisplay("Opa! Acabei de identificar uma alteração na quantidade de beacons encontrados: " + state);
-        }
+        }*/
     }
 
     /**
      * Envia notificação que existe um beacon por perto.
      */
     private void sendNotification() {
-        Notification notification = new Notification("Loca Virtz", "Um beacon está por perto.", new MonitoramentoBeaconActivity(), this);
+        Intent intent = new Intent(this, MonitoramentoBeaconActivity.class);
+        Notification notification = new Notification("Loca Virtz", "Um beacon está por perto.", intent, this);
         ShowNotifications show = new ShowNotifications();
         show.sendNotification(notification);
     }

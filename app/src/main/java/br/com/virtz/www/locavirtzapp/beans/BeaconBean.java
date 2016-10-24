@@ -1,13 +1,23 @@
 package br.com.virtz.www.locavirtzapp.beans;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class BeaconBean implements Serializable{
 
+    @SerializedName("id")
     private String id;
+
+    @SerializedName("nome")
     private String nome;
+
+    @SerializedName("dono")
     private String dono;
+
+
+    private Double distanciaAtual;
 
 
     public BeaconBean() {
@@ -43,4 +53,11 @@ public class BeaconBean implements Serializable{
         this.dono = dono;
     }
 
+    public Double getDistanciaAtual() {
+        return distanciaAtual;
+    }
+
+    public void setDistanciaAtual(Double distanciaAtual) {
+        this.distanciaAtual = distanciaAtual;
+    }
 }

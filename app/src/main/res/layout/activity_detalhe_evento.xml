@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp"
+    android:orientation="vertical"
+    android:background="@drawable/fundo_evento"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="br.com.virtz.www.locavirtzapp.DetalheEventoActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/layoutConteinerLinearEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="#FAF0E6"
+        android:layout_marginTop="100dp">
+
+        <TextView
+            android:id="@+id/txt_det_titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Olá "
+            android:textSize="28dp"
+            android:textStyle="bold"
+            android:textColor="#00008B"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/txt_det_descricao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Olá "
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btn_det_video"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btn_det_site"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_det_voltar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        android:background="@android:color/holo_orange_light"
+        android:height="40dp"
+        android:textSize="20dp"
+        android:layout_marginTop="20dp"
+        android:onClick="voltarMonitoramento"/>
+
+
+
+</LinearLayout>

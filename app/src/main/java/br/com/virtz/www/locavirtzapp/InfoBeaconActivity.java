@@ -6,7 +6,10 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
@@ -17,32 +20,49 @@ import org.altbeacon.beacon.Region;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import br.com.virtz.www.locavirtzapp.adapters.EventoAdapter;
+import br.com.virtz.www.locavirtzapp.async.EventoListagemTask;
+import br.com.virtz.www.locavirtzapp.beans.BeaconBean;
+import br.com.virtz.www.locavirtzapp.beans.EventoBean;
 import br.com.virtz.www.locavirtzapp.db.LocaDBHelper;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconConsumer;
 
-public class InfoBeaconActivity extends Activity implements BeaconConsumer {
+public class InfoBeaconActivity extends LocaVirtzSuperActivity implements BeaconConsumer {
 
     protected static final String TAG = "InfoBeaconActivity";
     private BeaconManager beaconManager = null;
 
-    private LocaDBHelper helper = null;
+    private EventoAdapter eventoAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_beacon);
-        try{
-            Intent service = new Intent(this.getApplicationContext(),VirtzBeaconConsumer.class);
-            this.stopService(service);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
 
-        helper = new LocaDBHelper(this);
+
+        ListView listaView = (ListView) findViewById(R.id.lista_eventos);
+        eventoAdapter = new EventoAdapter(this, new ArrayList<EventoBean>());
+        listaView.setAdapter(eventoAdapter);
+
+        listaView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(InfoBeaconActivity.this, DetalheEventoActivity.class);
+                BeaconBean evento = (BeaconBean) parent.getItemAtPosition(position);
+                intent.putExtra("EVENTO", evento);
+                startActivity(intent);
+            }
+        });
+
+        new EventoListagemTask(this, eventoAdapter).execute();
+
+        stopServiceBeacon(null);
     }
 
     @Override
@@ -50,12 +70,14 @@ public class InfoBeaconActivity extends Activity implements BeaconConsumer {
         super.onDestroy();
         beaconManager.unbind(this);
         ((LocaApplication) this.getApplicationContext()).setEstouRastreando(false);
+        initServiceBeacon(null);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         ((LocaApplication) this.getApplicationContext()).setEstouRastreando(false);
+        initServiceBeacon(null);
         if (beaconManager.isBound(this)) {
             beaconManager.setBackgroundMode(true);
         }
@@ -68,6 +90,7 @@ public class InfoBeaconActivity extends Activity implements BeaconConsumer {
         if (beaconManager.isBound(this)) {
             beaconManager.setBackgroundMode(false);
         }
+        stopServiceBeacon(null);
     }
 
     @Override
@@ -103,14 +126,6 @@ public class InfoBeaconActivity extends Activity implements BeaconConsumer {
 
             TextView dist = (TextView)InfoBeaconActivity.this.findViewById(R.id.txtDistanciaBeacon);
             dist.setText(nf.format(distancia));
-
-
-            String txtLocal = "Cozinha";
-            if(distancia > 1.5){
-                txtLocal = "Sala";
-            }
-            TextView nome = (TextView)InfoBeaconActivity.this.findViewById(R.id.txtNomeLocal);
-            nome.setText(txtLocal);
             }
         });
     }
