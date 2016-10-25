@@ -27,7 +27,12 @@ import org.altbeacon.beacon.BeaconManager;
 import java.util.ArrayList;
 
 import br.com.virtz.www.locavirtzapp.adapters.EventoAdapter;
+import br.com.virtz.www.locavirtzapp.adapters.NoticiaAdapter;
+import br.com.virtz.www.locavirtzapp.async.EventoListagemTask;
+import br.com.virtz.www.locavirtzapp.async.NoticiaListagemTask;
+import br.com.virtz.www.locavirtzapp.beans.BeaconBean;
 import br.com.virtz.www.locavirtzapp.beans.EventoBean;
+import br.com.virtz.www.locavirtzapp.beans.NoticiaBean;
 import br.com.virtz.www.locavirtzapp.dialog.AlertaEventoActivity;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconConsumer;
 import br.com.virtz.www.locavirtzapp.service.VirtzBeaconService;
@@ -36,7 +41,7 @@ public class MonitoramentoBeaconActivity extends LocaVirtzSuperActivity {
 
     protected static final String TAG = "MonitoramentoBeaconActivity";
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-
+    private NoticiaAdapter noticiaAdapter = null;
 
 
 
@@ -71,8 +76,12 @@ public class MonitoramentoBeaconActivity extends LocaVirtzSuperActivity {
             }
         }
 
-        //stopServiceBeacon(null);
-        //((LocaApplication) this.getApplicationContext()).setMonitoringActivity(this);
+
+        ListView listaView = (ListView) findViewById(R.id.lista_noticias_monitoramento);
+        noticiaAdapter = new NoticiaAdapter(this, new ArrayList<NoticiaBean>());
+        listaView.setAdapter(noticiaAdapter);
+
+        new NoticiaListagemTask(this, noticiaAdapter).execute();
 
     }
 
@@ -177,7 +186,7 @@ public class MonitoramentoBeaconActivity extends LocaVirtzSuperActivity {
     public void logToDisplay(final String line) {
         runOnUiThread(new Runnable() {
             public void run() {
-                TextView text = (TextView)MonitoramentoBeaconActivity.this.findViewById(R.id.monitoringText);
+                TextView text = (TextView)MonitoramentoBeaconActivity.this.findViewById(R.id.textoMonitorando);
                 text.setText(line);
             }
         });

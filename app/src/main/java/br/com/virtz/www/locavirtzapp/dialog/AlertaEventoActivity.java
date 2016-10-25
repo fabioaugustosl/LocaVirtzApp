@@ -33,33 +33,6 @@ public class AlertaEventoActivity extends Activity {
         TextView txtAlerta = (TextView) findViewById(R.id.txt_titulo_alerta);
         txtAlerta.setText(eventoAlerta.getTitulo());
 
-
-      //  AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-
-       /*
-
-        // set title
-        alertDialogBuilder.setTitle("Alerta!");
-
-        // set dialog message
-        alertDialogBuilder
-                .setMessage(eventoAlerta.getTitulo())
-                .setCancelable(true)
-                .setNeutralButton("Quero ver!", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent detalheIntent = new Intent(getApplicationContext(), DetalheEventoActivity.class);
-                        detalheIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        detalheIntent.putExtra("EVENTO", eventoAlerta);
-                        startActivity(detalheIntent);
-                        dialog.cancel();
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();*/
     }
 
 
@@ -69,9 +42,9 @@ public class AlertaEventoActivity extends Activity {
 
     public void ver(View v){
         Intent detalheIntent = new Intent(getApplicationContext(), DetalheEventoActivity.class);
-//        detalheIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         detalheIntent.putExtra("EVENTO", eventoAlerta);
         startActivity(detalheIntent);
         this.finish();
     }
+
 }

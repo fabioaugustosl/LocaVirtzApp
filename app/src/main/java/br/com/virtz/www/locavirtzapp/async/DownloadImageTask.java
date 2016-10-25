@@ -9,6 +9,8 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
+import br.com.virtz.www.locavirtzapp.util.RecuperadorImagem;
+
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
 
@@ -18,19 +20,12 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return mIcon11;
+        return new RecuperadorImagem(urldisplay).recuperar();
     }
 
     protected void onPostExecute(Bitmap result) {
         bmImage.setImageBitmap(result);
     }
+
 
 }

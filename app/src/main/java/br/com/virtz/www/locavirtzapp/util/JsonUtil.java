@@ -19,6 +19,7 @@ import java.util.List;
 
 import br.com.virtz.www.locavirtzapp.beans.BeaconBean;
 import br.com.virtz.www.locavirtzapp.beans.EventoBean;
+import br.com.virtz.www.locavirtzapp.beans.NoticiaBean;
 
 public class JsonUtil {
 
@@ -56,6 +57,26 @@ public class JsonUtil {
         Gson gson = new Gson();
         for(int i = 0; i< jsonObj.get("items").size(); i++){
             EventoBean b = gson.fromJson(jsonObj.get("items").get(i).toString(), EventoBean.class);
+            lista.add(b);
+        }
+
+        return lista;
+    }
+
+
+    public List<NoticiaBean> jsonToNotocia(String json) throws JSONException, IOException {
+        List<NoticiaBean> lista = new ArrayList<NoticiaBean>();
+
+        JsonFactory jsonfactory = new JsonFactory();
+        JsonParser jsonParser = jsonfactory.createJsonParser(json);
+
+        JsonNode jsonObj = null;
+        ObjectMapper mapper = new ObjectMapper();
+        jsonObj = mapper.readTree(jsonParser);
+
+        Gson gson = new Gson();
+        for(int i = 0; i< jsonObj.get("items").size(); i++){
+            NoticiaBean b = gson.fromJson(jsonObj.get("items").get(i).toString(), NoticiaBean.class);
             lista.add(b);
         }
 

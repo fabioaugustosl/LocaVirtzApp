@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import br.com.virtz.www.locavirtzapp.dialog.AlertaEventoActivity;
 public class DetalheEventoActivity extends LocaVirtzSuperActivity {
 
 
+    private boolean isInFocus = false;
     private EventoBean evento  = null;
 
     @Override
@@ -76,5 +78,19 @@ public class DetalheEventoActivity extends LocaVirtzSuperActivity {
     public void voltarMonitoramento(View view) {
         Intent intent = new Intent(this, MonitoramentoBeaconActivity.class);
         startActivity(intent);
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d("DetalhaEventoActivity", "FOCUS = " + hasFocus);
+        isInFocus = hasFocus;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (!isInFocus) finish();
     }
 }
